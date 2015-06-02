@@ -4,15 +4,21 @@ require_once('database.php');
 require_once('user.php');
 
 // superuser inherits all the functionality of the user class
-class SuperUser extends user{
+class SuperUser extends User{
 
-	// function to view all the registered users
-	public function showAllUsers(){
+	
+	//function to send email notification to the user.
+	public function sendEmailNotification(){
 
 	}
 
-	// function to remove a registerd user
-	public function removeUser(){
+	// function to add events in the events database
+	public function addEvent(){
+
+	}
+
+	// function to remove an event
+	public function removeEvent(){
 
 	}
 	

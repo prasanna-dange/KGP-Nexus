@@ -16,6 +16,7 @@ html,body{
 .header{
 	padding:1em 0;
 	background:#ff7212;
+
 }
 .logo {
 	float:left;
@@ -38,6 +39,12 @@ html,body{
 
 /* CSS FOR THE TAB MENU */
 
+#menuHeader{
+	z-index: 999;
+	-webkit-transition:linear all 2s;
+	-moz-transition:linear all 2s;
+	transition:linear all 2s;
+}
 .header-bottom {
   background: #fff;
   text-align: center;

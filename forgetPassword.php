@@ -15,7 +15,7 @@
 			<p>To reset your account password or username, enter the
 				email address and we will send your instruction.</p>
 			<li>
-				<input type="text" class="text" placeholder="E-mail" id="email2" ><a href="#" class=" icon3 mail2"></a>
+				<input type="text" class="text" placeholder="E-mail" id="email2" ><a href="#" tabindex="-1" class=" icon3 mail2"></a>
 			</li>
 			<div class="submit three">
 				<input type="button" onclick="passwordReset()" value="SIGN UP" >

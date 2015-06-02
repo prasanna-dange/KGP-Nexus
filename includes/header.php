@@ -37,7 +37,7 @@
 	<div class="loading loader">	</div>
 
 	<!-- TOPMOST HEADER STARTS HERE -->
-	<div class="header">
+	<div class="header" id="actualHeader">
 		<div class="container">
 			<div class="logo">
 				<a href="index.php"><img src="images/logo.png" class="img-responsive" alt=""></a>
@@ -50,7 +50,7 @@
 	</div>
 
 	<!-- TAB MENU STARTS HERE -->
-	<div class="header-bottom">
+	<div class="header-bottom" id="menuHeader">
 		<div class="container">
 			<div class="head-nav">
 				<span class="menu"> </span>
@@ -104,10 +104,10 @@
 					<div class="one-login  hvr-float-shadow">								
 						<form >
 							<li class="highlightDiv">
-								<input type="text" class="text" id="username" placeholder="Username"  required><a href="#" class=" icon user"></a>
+								<input type="text" class="text" id="username" placeholder="Username"  required><a href="#" tabindex="-1" class=" icon user"></a>
 							</li>
 							<li>
-								<input type="password" placeholder="Password" id="password" required><a href="#" class=" icon lock"></a>
+								<input type="password" placeholder="Password" id="password" required><a href="#" tabindex="-1" class=" icon lock"></a>
 							</li>
 							<div class="p-container">
 									<label class="checkbox">

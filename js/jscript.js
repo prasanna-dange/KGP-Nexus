@@ -6,6 +6,20 @@ $(window).load(function(){
 	
 })
 
+// function to fix the menu div on scrolling
+$(function(){
+	var menuHeaderHeight=$("#menuHeader").offset().top;
+	$(window).scroll(function(){
+		if(document.body.scrollTop>menuHeaderHeight){
+			$("#menuHeader").css({position:'fixed',top:'0px',width:'100%'});
+			$("#actualHeader").css('margin-bottom','72px');
+		}
+		else{
+			$("#menuHeader").css({position:'static',top:'0px'});
+			$("#actualHeader").css('margin-bottom','0');
+		}
+	})
+});
 
 //functions to show and hide the waiting logo
 function showWaiting(){
@@ -16,7 +30,7 @@ function hideWaiting(){
 }
 // function to log user in using ajax
 function checkLogin(){
-	alert("working");
+	//alert("working");
 	showWaiting();
 	var username=$("#username").val();
 	var password=$("#password").val();
@@ -38,7 +52,12 @@ function checkLogin(){
 		}).success(function(msg){
 			//alert(msg);
 			if(msg=="1"){
-				window.location.reload(true);
+				window.location.assign('index.php');
+			}
+			else if(msg=="112"){
+				$("#alertContent").text("Account not activated! Please check your email to activate your account!");
+				$("#alertDiv").modal('show');
+				hideWaiting();
 			}
 			else{
 				$("#alertContent").text("Wrong Username and password combination!");
@@ -90,10 +109,17 @@ function signUp(){
 			method:'POST',
 			data:{username:username,password:password1,fname:fname,lname:lname,email:email,signUp:true},
 		}).success(function(msg){
-			if(msg=="01"){
-				window.location.assign("index.php");
+			//alert(msg);
+			if(msg=="010"){
+				$("#alertContent").text("successfully Registered! Please Login");
+				$("#alertDiv").modal('show');	
+				hideWaiting();
 			}
-
+			else if(msg=="011"){
+				$("#alertContent").text("Succesfull Registrarion! Please check your email to verify your account");
+				$("#alertDiv").modal('show');	
+				hideWaiting();
+			}
 			else if(msg=="0Duplicate entry '"+email+"' for key 'rollNumber'"){
 				$("#alertContent").text("EMail ID already registerd! ");
 				$("#alertDiv").modal('show');	
@@ -105,7 +131,7 @@ function signUp(){
 				hideWaiting();
 			}
 			else{
-				window.location.reload(true);
+				//window.location.reload(true);
 			}
 		})
 	}
@@ -135,7 +161,7 @@ function passwordReset(){
 				$("#alertDiv").modal('show');
 			}
 			else if(msg=="25"){
-				$("#alertContent").text("Wrong Email Address");
+				$("#alertContent").text("EMail Address not Registered");
 				hideWaiting();
 				$("#alertDiv").modal('show');
 			}

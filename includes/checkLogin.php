@@ -8,7 +8,7 @@
 		$user->newUser();
 	}
 	else if(isset($_POST['reset'])){
-		$user->resetAccount();
+		$user->resetAccount($_POST['email']);
 	}
 	else{
 		header('Location:index.php');

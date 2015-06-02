@@ -20,14 +20,20 @@ class User{
 		$lname 	  = strtoupper($_POST['lname']);
 		$result	  = $this->checkUser($username,$password);
 		if(!isset($result)){
-			$query="INSERT INTO users VALUES ( '".$username."','".$password."','".$fname."','".$lname."','".$email."','' )";
+			$query="INSERT INTO users VALUES ( '".$username."','".$password."','".$fname."','".$lname."','".$email."','','' )";
 			$database = new Database();
 			$result=$database->performQuery($query);
 			if(!$result){
 				die("3".mysql_error());
 			}
 			else{
-				$this->logIn();
+				$result=$this->sendVerificationEmail($email);
+				if($result){
+					echo '1';
+				}
+				else{
+					echo '0';
+				}
 			}
 		}
 		else if(mysql_num_rows($result)==1){
@@ -57,13 +63,20 @@ class User{
 		$password=$_POST['password'];	
 		$result=$this->checkUser($username,$password);
 		if($result){
-			//echo "successful login";
 			$row=mysql_fetch_array($result);
-			$_SESSION['username']=$username;
-			$_SESSION['userId']=$row['userID'];
-			$_SESSION['firstName']=$row['firstName'];
-			$_SESSION['lastName']=$row['lastName'];
-			$_SESSION['email']=$row['email'];
+			if($row['active']=='active'){
+				//echo "successful login";				
+				$_SESSION['username']=$username;
+				$_SESSION['userId']=$row['userID'];
+				$_SESSION['firstName']=$row['firstName'];
+				$_SESSION['lastName']=$row['lastName'];
+				$_SESSION['email']=$row['email'];
+				$_SESSION['userLevel']="normal";
+			}
+			else{
+				$this->sendVerificationEmail($row['email']);
+				echo 2;
+			}
 		}
 	}
 
@@ -80,17 +93,42 @@ class User{
 	}
 
 	// function to send verification email to the new user
-	private function verifyEmail(){
+	private function sendVerificationEmail($email){
+		$to=$email;
+		$hash=md5(rand(0,1000));
+		$query="UPDATE users SET active='".$hash."' WHERE email='".$email."' ";
+		$subject="KGP-Nexus Email Verification";
+		$message='
+				Hi there,
+						Welcome to KGP-Nexus.To activate your account click <a href="http://www.nexus.swgiitkgp.in/activate.php?x='.$hash.'"&email="'.$to.'"">here</a> or paste the following link in a new tab.
 
+						----------------------------------------------------------------------------------------------
+						http://www.nexus.swgiitkgp.in/activate.php?x="'.$hash.'"&email="'.$to.'"
+						----------------------------------------------------------------------------------------------
+
+
+
+		';
+		$email=new Email();
+		if($email->sendEmail($to,$subject,$message)){
+			$database=new Database();
+			$database->performQuery($query);
+			echo true;
+		}
+		else{
+			echo false;
+		}
 	}
 
-	//function to send email notification to the user.
-	public function sendEmailNotification(){
-
-	}
 
 	// function to authenticate a user
 	public function authenticate(){
+		if(isset($_SESSION['userLevel']) && $_SESSION['userLevel']=='normal'){
+			;
+		}
+		else{
+			header('Location:index.php');
+		}
 
 	}
 
@@ -109,15 +147,10 @@ class User{
 	}
 
 	// function to send the account reset email to the user
-	private function sendResetEmail($email){
-		$hash = md5( rand(0,1000) ); // For activation key
-	    $msg = $hash;
-		$sql = 'UPDATE users SET password = '.$msg.' WHERE email = '.$email.' ';
-	    $to  = $email; // Send email to our user
-
-		$headers = "MIME-Version: 1.0" . "\r\n";
-		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-		$headers .= 'From: <webmaster@swgiitkgp.in>' . "\r\n";
+	private function sendResetEmail($to){
+		$msg = md5( rand(0,1000) ); //creating new password
+		$sql = 'UPDATE users SET password = '.$msg.' WHERE email = '.$to.' ';
+	    $email=new Email();
 	    $subject = 'Reset Credentials'; // Give the email a subject 
 	    $message = '
 	            
@@ -131,15 +164,13 @@ class User{
 
 	                        '; 
 	        
-	           
-	    if( mail($to, $subject, $message, $headers)  )  
-	    {  
-			$result = $database->performQuery($sql); 
-			echo 'Reset password is sent to your email address'; 
-	    } 
-	    else 
-	    { 
-	        echo 'ERROR occured. Please try again later.' ;
+	    if($email->sendEmail($to,$subject,$message)){
+	    	$database=new Database();
+	    	$result=$database->performQuery($sql);
+	    	echo 'Reset Email successfully sent';
+	    }
+	    else{
+	    	echo 'An error occurred! Please try after sometime!';
 	    }
 	}
 
